@@ -41,6 +41,8 @@ public class Dialogue {
         System.out.print("\nUsername: ");
         name = scanner.nextLine();
     }
+    // Prints the hand
+    public void printHand() {System.out.println("Hand: "+hand);}
     /* Main text dialogue, tells player deck+discard size, 
      * current enemy stats, hand, played cards, and # of jokers left
      */
@@ -49,7 +51,7 @@ public class Dialogue {
         System.out.println("\nRegicide: Deck "+library.getSize()+" | Discard "
             +discard.getSize()+"\nCurrent Enemy: "+enemy
             +" ["+enemy.getToughness()+" hp / "+enemy.getPower()
-            +" dmg]\nPlayed cards: "+limbo+"| Jokers left: "+jokers+"\n\nHand: "+hand);    
+            +" dmg]\nPlayed cards: "+limbo+"| Jokers left: "+jokers+"\n");    
     }
     /* Prompts player for a Card until they return a Card that is in Deck d
      * @param input the String of a Card to be checked
@@ -58,6 +60,9 @@ public class Dialogue {
      */
     public Card getValidCard(String input, Rank cardRank)
     {
+        if (input.equals("JOKER") && jokers>0 && cardRank == Rank.NORANK) {return new Card(Rank.JOKER);}
+        if (input.equals("NO")) {return new Card(Rank.NORANK);}
+
         Card movedCard = hand.get(input);
 
         while (movedCard == null)
@@ -87,26 +92,23 @@ public class Dialogue {
     {
         String jokerText = "";
         if (jokers>0)
-            jokerText = "/Use a JOKER";
-        System.out.print("Play a card (ACEs first)"+jokerText+": ");
+            jokerText = ", use a JOKER";
+        printHand();
+        System.out.print("Play a card (ACEs first)"+jokerText+", or type \"NO\": ");
         String input = scanner.nextLine();
         System.out.println("");
-
-        if (input.equals("JOKER") && jokers>0) {return new Card(Rank.JOKER);}
         
-        return hand.moveTo(getValidCard(input, Rank.NORANK), limbo);
+        return getValidCard(input, Rank.NORANK);
     }
     public Card playCardText(Rank rank)
     {
-        System.out.println("Hand: "+hand);
+        printHand();
         String rankName = rank.name();
         if (rank==Rank.ACE) {rankName = "non-ACE";}
         System.out.print("Play another "+rankName+" card or type \"NO\": ");
 
         String input = scanner.nextLine();
         System.out.println("");
-
-        if (input.equals("NO")) {return new Card(Rank.NORANK);}
 
         return hand.moveTo(getValidCard(input, rank), limbo);
     }

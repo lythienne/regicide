@@ -1,3 +1,4 @@
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 
 /* Game class runs a game of regicide
@@ -97,6 +98,14 @@ public class Game
         else
             library.moveTo(x, hand);
     }
+    /* Player uses a joker to discard their hand and draw 8 new cards
+     */
+    public void useJoker()
+    {
+        hand.moveTo(-1, discard);
+        draw(8);
+        d.jokers--;
+    }
     /* Player plays a card from their hand to deal damage to the enemy
      * draws cards if it is a diamond, heals cards if it is a heart
      * Player can play combos with ACEs, TWOs, THREEs, FOURs, and FIVES
@@ -107,17 +116,17 @@ public class Game
         ArrayList<Suit> suits = new ArrayList<Suit>();
         Card playedCard = d.playCardText();
 
+        if (playedCard.getRank()==Rank.JOKER)
+        {
+            useJoker();
+            playedCard = d.playCardText();
+        }
+        hand.moveTo(playedCard, limbo);
         int totalValue = playedCard.getValue();
         suits.add(playedCard.getSuit());
 
         switch(playedCard.getRank())
         {
-            case JOKER:
-                hand.moveTo(-1, discard);
-                draw(8);
-                d.jokers--;
-                turn();
-                break;
             case ACE:
                 if (hand.getSize()>0)
                 {
@@ -163,8 +172,12 @@ public class Game
             totalValue *= 2;
         }
 
-        enemy.takeDamage(totalValue);
-        d.cardEffectText(totalValue, null);
+        if (totalValue>0)
+        {
+            enemy.takeDamage(totalValue);
+            d.cardEffectText(totalValue, null);
+        }
+        
     }
     /* Allows players to play multiple cards of the same rank as long
      * as their total combined value is less than 10
@@ -228,6 +241,11 @@ public class Game
         while (damageLeft > 0)
         {
             Card discardedCard = d.playerTakeDamageText(damageLeft);
+            if (discardedCard.getRank()==Rank.JOKER)
+            {
+                useJoker();
+                discardedCard = d.playerTakeDamageText(damageLeft);
+            }
             damageLeft -= discardedCard.getValue();
             hand.moveTo(discardedCard, discard);
             if (hand.getSize()==0)

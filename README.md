@@ -19,6 +19,6 @@ Type JOKER instead of playing a card to use a joker.
 Badger Games for the designing the original card game Regicide.
 
 # Known bugs:
-If player mistypes JOKER, they cannot use a JOKER from the invalid card menu.
+--
 
 Please report found bugs to harrisonlinchen@gmail.com
