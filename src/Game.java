@@ -97,8 +97,7 @@ public class Game
         else
             library.moveTo(x, hand);
     }
-    /* Player uses a joker to discard their hand and draw 8 new cards
-     */
+    // Player uses a joker to discard their hand and draw 8 new cards
     public void useJoker()
     {
         hand.moveTo(-1, discard);
