@@ -1,4 +1,3 @@
-import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 
 /* Game class runs a game of regicide
